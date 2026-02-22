@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
         width: 390,
-        alignItems: "center"
+        alignItems: "center",
     },
 
     titleContainer: {
