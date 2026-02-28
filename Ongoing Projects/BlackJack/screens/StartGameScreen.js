@@ -1,10 +1,11 @@
 import { View, StyleSheet, Image } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
 // import components
 import Title from "../components/Title";
 import NavButton from "../components/NavButton";
-
+import Colors from "../constants/colors";
 
 // -----------------
 // Start Game Screen
@@ -15,29 +16,37 @@ function StartGameScreen(props) {
   const inset = useSafeAreaInsets();
 
   return (
-    <View
-      style={[
-        styles.rootContainer,
-        {
-          paddingTop: inset.top,
-          paddingBottom: inset.bottom,
-          paddingLeft: inset.left,
-          paddingRight: inset.right,
-        },
-      ]}
+    <LinearGradient
+      colors={[Colors.accent800, Colors.accent200, Colors.accent800, Colors.accent200]}
+      style={styles.rootContainer}      
     >
-      <View style={styles.titleContainer}>
-        <Title>BlackJack 21</Title>
-      </View>
+      <View
+        style={[
+          styles.rootContainer,
+          {
+            paddingTop: inset.top,
+            paddingBottom: inset.bottom,
+            paddingLeft: inset.left,
+            paddingRight: inset.right,
+          },
+        ]}
+      >
+        <View style={styles.titleContainer}>
+          <Title>BlackJack 21</Title>
+        </View>
 
-      <View style={styles.imageContainer}>
-        <Image style={styles.image} source={require("../assets/images/blackjackbg.png")}/>
-      </View>
+        <View style={styles.imageContainer}>
+          <Image
+            style={styles.image}
+            source={require("../assets/images/blackjackbg.png")}
+          />
+        </View>
 
-      <View style={styles.buttonContainer}>
-        <NavButton onPress={props.onNext}>Play Now</NavButton>
+        <View style={styles.buttonContainer}>
+          <NavButton onPress={props.onNext}>Play Now</NavButton>
+        </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 

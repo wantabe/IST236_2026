@@ -1,4 +1,4 @@
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, ImageBackground } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 
@@ -8,7 +8,6 @@ import Header from "../components/Header";
 
 // import constants
 import Cards from "../constants/cards";
-
 
 // function to generate random cards
 function generateRandomBetween(min, max, exclude) {
@@ -31,7 +30,6 @@ function generateRandomBetween(min, max, exclude) {
 function GameScreen(props) {
   // set safe area screen boundaries
   const inset = useSafeAreaInsets();
-
 
   // ----------
   // Game Logic
@@ -80,7 +78,7 @@ function GameScreen(props) {
           newUserCards[newUserCards.indexOf("aceClubs")] = "lowAceClubs";
           return newUserCards;
         });
-        
+
         // change the user score
         setUserScore((prevUserScore) => {
           return prevUserScore - 10 + Cards[userCard].value;
@@ -168,10 +166,11 @@ function GameScreen(props) {
         // change to low ace
         setComputerHand((prevComputerCards) => {
           let newComputerCards = prevComputerCards;
-          newComputerCards[newComputerCards.indexOf("aceClubs")] = "lowAceClubs";
+          newComputerCards[newComputerCards.indexOf("aceClubs")] =
+            "lowAceClubs";
           return newComputerCards;
         });
-        
+
         // change the computer score
         setComputerScore((prevComputerScore) => {
           return prevComputerScore - 10 + Cards[computerCard].value;
@@ -182,7 +181,8 @@ function GameScreen(props) {
         // change to low ace
         setComputerHand((prevComputerCards) => {
           let newComputerCards = prevComputerCards;
-          newComputerCards[newComputerCards.indexOf("aceSpades")] = "lowAceSpades";
+          newComputerCards[newComputerCards.indexOf("aceSpades")] =
+            "lowAceSpades";
           return newComputerCards;
         });
 
@@ -196,7 +196,8 @@ function GameScreen(props) {
         // change to low ace
         setComputerHand((prevComputerCards) => {
           let newComputerCards = prevComputerCards;
-          newComputerCards[newComputerCards.indexOf("aceHearts")] = "lowAceHearts";
+          newComputerCards[newComputerCards.indexOf("aceHearts")] =
+            "lowAceHearts";
           return newComputerCards;
         });
 
@@ -210,7 +211,8 @@ function GameScreen(props) {
         // change to low ace
         setComputerHand((prevComputerCards) => {
           let newComputerCards = prevComputerCards;
-          newComputerCards[newComputerCards.indexOf("aceDiamonds")] = "lowAceDiamonds";
+          newComputerCards[newComputerCards.indexOf("aceDiamonds")] =
+            "lowAceDiamonds";
           return newComputerCards;
         });
 
@@ -270,81 +272,93 @@ function GameScreen(props) {
       props.onSetComputerScore(computerScore);
       props.onNext();
     }
-  }, [userScore]) // dependent on userScore and will activate when user score changes
+  }, [userScore]); // dependent on userScore and will activate when user score changes
 
   // hook that will trigger when user finished
   useEffect(() => {
-    if (userFinished === true && computerScore >16) {
+    if (userFinished === true && computerScore > 16) {
       props.onSetUserScore(userScore);
       props.onSetComputerScore(computerScore);
       props.onNext();
     }
-  }, [userFinished, computerScore])
-
+  }, [userFinished, computerScore]);
 
   // -------
   // Display
   // -------
 
   return (
-    <View
-      style={[
-        styles.rootContainer,
-        {
-          paddingTop: inset.top,
-          paddingBottom: inset.bottom,
-          paddingLeft: inset.left,
-          paddingRight: inset.right,
-        },
-      ]}
+    <ImageBackground
+      source={require("../assets/images/blackjack_felt.jpg")}
+      resize="cover"
+      style={styles.rootContainer}
+      imageStyle={styles.backgroundImage}
     >
-      {/*COMPUTER*/}
-      <View style={styles.headerContainer}>
-        <Header>Computer's Hand</Header>
-      </View>
-      <View style={styles.computerImageContainer}>
-        <Image 
-            style={styles.computerImage} 
-            source={require("../assets/images/cardback1.png")} 
-        />
-        <Image
+      <View
+        style={[
+          styles.rootContainer,
+          {
+            paddingTop: inset.top,
+            paddingBottom: inset.bottom,
+            paddingLeft: inset.left,
+            paddingRight: inset.right,
+          },
+        ]}
+      >
+        {/*COMPUTER*/}
+        <View style={styles.headerContainer}>
+          <Header>Computer's Hand</Header>
+        </View>
+        <View style={styles.computerImageContainer}>
+          <Image
             style={styles.computerImage}
-            source={
-              computerHand.length === 0 ? require("../assets/images/cardback1.png") 
-              : Cards[computerHand[1]].picture
-            }
-        />
-      </View>
-
-      {/*PLAYER*/}
-      <View style={styles.headerContainer}>
-        <Header>Player's Hand</Header>
-      </View>
-      <View style={styles.playerImageContainer}>
-        {userHand.map((index) => {
-          return (
+            source={require("../assets/images/cardback1.png")}
+          />
+          <View style={{marginLeft: -10}}>
             <Image
-              style={[styles.playerImage, { width: 100 - numUserHand * 10 }]}
-              key={index}
+              style={styles.computerImage}
               source={
-                userHand.length === 0
+                computerHand.length === 0
                   ? require("../assets/images/cardback1.png")
-                  : Cards[index].picture
+                  : Cards[computerHand[1]].picture
               }
             />
-          );
-        })}
-      </View>
+          </View>
+        </View>
 
-      <View style={styles.buttonsContainer}>
-        <View style={styles.buttonContainer}>
-            <NavButton onPress={drawUserCardHandler}>Hit Me</NavButton>
+        {/*PLAYER*/}
+        <View style={styles.headerContainer}>
+          <Header>Player's Hand</Header>
         </View>
-        <View style={styles.buttonContainer}>
+        <View style={styles.playerImageContainer}>
+          {userHand.map((index) => {
+            return (
+              <Image
+                style={[
+                  styles.playerImage,
+                  { marginLeft: -10 * (numUserHand + 1) },
+                ]}
+                key={index}
+                source={
+                  userHand.length === 0
+                    ? require("../assets/images/cardback1.png")
+                    : Cards[index].picture
+                }
+              />
+            );
+          })}
+        </View>
+
+        <View style={styles.buttonsContainer}>
+          <View style={styles.buttonContainer}>
+            <NavButton onPress={drawUserCardHandler}>Hit Me</NavButton>
+          </View>
+          <View style={styles.buttonContainer}>
             <NavButton onPress={stayHandler}>Stay</NavButton>
+          </View>
         </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 
@@ -353,6 +367,10 @@ export default GameScreen;
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
+  },
+
+  backgroundImage: {
+    opacity: 0.35,
   },
 
   headerContainer: {
@@ -364,7 +382,7 @@ const styles = StyleSheet.create({
   computerImageContainer: {
     flex: 3,
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
   },
   computerImage: {
@@ -376,7 +394,7 @@ const styles = StyleSheet.create({
   playerImageContainer: {
     flex: 3,
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
   },
   playerImage: {

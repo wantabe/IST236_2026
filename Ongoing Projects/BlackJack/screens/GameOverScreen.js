@@ -1,5 +1,6 @@
 import { View, StyleSheet, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
 // import components
 import Title from "../components/Title";
@@ -40,36 +41,38 @@ function GameOverScreen(props) {
   }
 
   return (
-    <View
-      style={[
-        styles.rootContainer,
-        {
-          paddingTop: inset.top,
-          paddingBottom: inset.bottom,
-          paddingLeft: inset.left,
-          paddingRight: inset.right,
-        },
-      ]}
+    <LinearGradient
+      colors={[Colors.accent200, Colors.primary800, Colors.accent200]}
+      style={styles.rootContainer}
     >
-        <View style={styles.titleContainer}>
-            {titleText}
+      <View
+        style={[
+          styles.rootContainer,
+          {
+            paddingTop: inset.top,
+            paddingBottom: inset.bottom,
+            paddingLeft: inset.left,
+            paddingRight: inset.right,
+          },
+        ]}
+      >
+        <View style={styles.titleContainer}>{titleText}</View>
+
+        <View style={styles.scoreContainer}>
+          <Header>Computer Score:</Header>
+          <Text style={styles.scoreText}>{computerScore}</Text>
         </View>
 
         <View style={styles.scoreContainer}>
-            <Header>Computer Score:</Header>
-            <Text style={styles.scoreText}>{computerScore}</Text>
+          <Header>Player Score:</Header>
+          <Text style={styles.scoreText}>{playerScore}</Text>
         </View>
 
-        <View style={styles.scoreContainer}>
-            <Header>Player Score:</Header>
-            <Text style={styles.scoreText}>{playerScore}</Text>
+        <View style={styles.buttonContainer}>
+          <NavButton onPress={props.onNext}>Play Now</NavButton>
         </View>
-      
-
-      <View style={styles.buttonContainer}>
-        <NavButton onPress={props.onNext}>Play Now</NavButton>
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
