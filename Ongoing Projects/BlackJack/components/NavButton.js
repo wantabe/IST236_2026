@@ -1,15 +1,24 @@
-import { Pressable, View, Text, StyleSheet } from "react-native";
+import { Pressable, View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import Colors from "../constants/colors";
 
 
 function NavButton(props) {
+    const { width, height } = useWindowDimensions();
+
+    // if in portrait, base size on screen width
+    let size = width * 0.05;
+    // if in landscape, base size on screen height
+    if (width > height) {
+        size = height * 0.1;
+    }
+
     return(
         <Pressable
         android_ripple={{color: "grey"}}
         onPress={props.onPress}>
-            <View style={styles.buttonContainer}>
+            <View style={[styles.buttonContainer, {width: width * 0.4, borderRadius: width * 0.4}]}>
                 <View style={styles.textContainer}>
-                    <Text style={styles.text}>{props.children}</Text>
+                    <Text style={[styles.text, {fontSize: size}]}>{props.children}</Text>
                 </View>
             </View>
         </Pressable>

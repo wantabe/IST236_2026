@@ -1,4 +1,4 @@
-import { Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, useWindowDimensions } from "react-native";
 
 // import constants
 import Colors from "../constants/colors";
@@ -9,7 +9,16 @@ import Colors from "../constants/colors";
 // ----------------
 
 function Header(props) {
-    return <Text style={styles.header}>{props.children}</Text>
+    const { width, height } = useWindowDimensions();
+    
+    // if in portrait, base size on screen width
+    let size = width * 0.1;
+    // if in landscape, base size on screen height
+    if (width > height) {
+        size = height * 0.1;
+    }
+
+    return <Text style={[styles.header, {fontSize: size}]}>{props.children}</Text>
 }
 
 export default Header;

@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "BlackJack",
-    "slug": "BlackJack",
+    "name": "HotelReservation",
+    "slug": "HotelReservation",
     "version": "1.0.0",
     "orientation": "auto",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/CardsSplash.png",
-      "resizeMode": "cover",
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
@@ -24,6 +24,10 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "@react-native-community/datetimepicker",
+      "expo-font"
+    ]
   }
 }
