@@ -47,7 +47,7 @@ export default function App() {
               headerTitleStyle: { fontFamily: "vacation", fontSize: 36 },
               contentStyle: { backgroundColor: Colors.accent800 },
             }}
-          > {/* Home Screen */}
+          >{/* Home Screen */}
             <Stack.Screen
               name="HomeScreen"
               component={HomeScreen}
@@ -56,7 +56,7 @@ export default function App() {
               }}
             />
             {/* Overview Screen */}
-            <Stack.Screen 
+            <Stack.Screen
               name="DestinationsOverviewScreen"
               component={DestinationsOverviewScreen}
             />
