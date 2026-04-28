@@ -1,7 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable } from "react-native";
+
+// import constants
 import Colors from "../constants/colors";
 
+// ------------------------
+// BookmarkButton Component
+// ------------------------
 function BookmarkButton(props) {
   if (props.pressed) {
     return (

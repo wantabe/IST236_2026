@@ -12,17 +12,35 @@ import NavButton from "../components/NavButton";
 // import constants
 import Colors from "../constants/colors";
 
-// import context
+// import contexts
 import { BookmarksContext } from "../store/context/bookmarks-context";
+import { ReadingProgressContext } from "../store/context/reading-progress-context";
 
+// import modal
+import AddToList from "../modals/AddToList";
+import LogSession from "../modals/LogSession";
+
+// -----------------
+// BookDetail Screen
+// -----------------
 function BookDetailScreen(props) {
+    // get the contexts
     const bookmarkedBooksCtx = useContext(BookmarksContext);
+    const progressCtx = useContext(ReadingProgressContext);
 
+    // get the selected book id
     const bookId = props.route.params.bookId;
+
+    // get the current reading progress
+    const currentProgress = progressCtx.getProgress(bookId);    
+
+    // get the book from the sample data using its id
     const selectedBook = BOOKS.find((book) => book.id === bookId);
 
+    // check if book is bookmarked using context
     const bookIsBookmarked = bookmarkedBooksCtx.ids.includes(bookId);
 
+    // handle bookmark toggling
     function changeBookmarkStatusHandler() {
         if (bookIsBookmarked) {
             bookmarkedBooksCtx.removeBookmark(bookId);
@@ -31,9 +49,12 @@ function BookDetailScreen(props) {
         }
     }
 
+    // bookmark icon display/update
     useLayoutEffect(() => {
         props.navigation.setOptions({
             title: "",
+            headerStyle: { backgroundColor: Colors.primary600 },
+            headerTintColor: Colors.accent500,
             headerRight: () => {
                 return (
                     <BookmarkButton
@@ -45,77 +66,134 @@ function BookDetailScreen(props) {
         });
     }, [props.navigation, changeBookmarkStatusHandler]);
 
+    // handle addtolist modal
+    const [modalIsVisible, setModalIsVisible] = useState(false);
+    function addToListHandler() { // open the modal
+        setModalIsVisible(true);
+    }
+    function closeAddToListHandler() { // close the modal
+        setModalIsVisible(false);
+    }
+
+    // handle logsession modal
+    const [logSessionVisible, setLogSessionVisible] = useState(false);
+    function openLogSessionHandler() { // open the modal
+        setLogSessionVisible(true);
+    }
+    function closeLogSessionHandler() { // close the modal
+        setLogSessionVisible(false);
+    }
+
+    // -------
+    // Display
+    // -------
     return (
-        <ScrollView style={styles.rootContainer}>
+        <View style={styles.rootContainer}>
+            {/* book image */}
             <View style={styles.imageContainer}>
                 <Image
                     style={styles.image}
                     source={{ uri: selectedBook.imageUrl }}
                 />
-            </View>
+            </View>            
 
+            {/* book info */}
             <View style={styles.infoContainer}>
                 <Text style={styles.title}>{selectedBook.title}</Text>
 
                 <View style={styles.metaRow}>
                     <Text style={styles.author}>{selectedBook.author}</Text>
                     <Text style={styles.metaDivider}> · </Text>
-                    <Text style={styles.rating}>{selectedBook.rating}</Text>
+                    <Text style={styles.rating}>{selectedBook.rating} / 5</Text>
                 </View>
 
+                {/* reading progress */}
                 <View style={styles.progressContainer}>
-                    <Slider></Slider>
+                    <Slider
+                        minimumValue={0}
+                        maximumValue={selectedBook.pageCount}
+                        value={currentProgress.currentPage}
+                        minimumTrackTintColor={Colors.accent300}
+                        maximumTrackTintColor={Colors.accent500}
+                        thumbTintColor={Colors.accent500}
+                        disabled={true}
+                    />
+                    <Text style={styles.progressText}>
+                        {currentProgress.currentPage} / {selectedBook.pageCount} pages
+                    </Text>
                 </View>
 
+                {/* log reading session/add to list */}
                 <View style={styles.buttonContainer}>
-                    <NavButton>Add to List</NavButton>
+                    <NavButton onPress={openLogSessionHandler}>Log Session</NavButton>
+                    <NavButton onPress={addToListHandler}>Add to List</NavButton>
                 </View>
 
+                {/* log session modal */}
+                <LogSession
+                    visible={logSessionVisible}
+                    onClose={closeLogSessionHandler}
+                    bookId={bookId}
+                    pageCount={selectedBook.pageCount}
+                />
+
+                {/* add to list modal */}
+                <AddToList
+                    visible={modalIsVisible}
+                    onClose={closeAddToListHandler}
+                    bookId={bookId}
+                />
+
+                {/* bottom info */}
                 <View style={styles.bottomContainer}>
                     <ScrollView style={styles.descGenreContainer}>
                         <View style={styles.descContainer}>
                             <Text style={styles.description}>{selectedBook.description}</Text>
                         </View>
+                    </ScrollView>
                         <View style={styles.genreContainer}>
                             <Text style={styles.genre}>{selectedBook.genre}</Text>
-                        </View>
-                    </ScrollView>
+                        </View>                    
                 </View>
             </View>
-        </ScrollView>
-    )
+        </View>
+    );
 }
 
 export default BookDetailScreen;
 
+// stylesheet
 const styles = StyleSheet.create({
     rootContainer: {
         flex: 1,
-        backgroundColor: "#0f0f1a",
+        backgroundColor: Colors.primary500,
     },
 
     imageContainer: {
         marginVertical: 10,
-        height: 300,
+        marginHorizontal: 10,
+        height: 250,
         paddingHorizontal: 10,
+        borderRadius: 10,
+        backgroundColor: Colors.primary500,
     },
     image: {
         height: "100%",
         resizeMode: "contain",
-        borderRadius: 7,
+        borderRadius: 20,
     },
     
     infoContainer: {
         borderRadius: 7,
-        backgroundColor: Colors.primary500o8,
+        backgroundColor: Colors.primary600o8,
         flex: 1,
         paddingHorizontal: 16,
         paddingVertical: 12,
     },
     title: {
-        color: Colors.primary300,
+        color: Colors.primary100,
         fontSize: 24,
-        fontFamily: "playfair",
+        fontFamily: "playfairBold",
         paddingBottom: 10,
         textAlign: "center",
     },
@@ -126,54 +204,69 @@ const styles = StyleSheet.create({
         paddingBottom: 4,
     },
     author: {
-        color: Colors.primary300,
+        color: Colors.primary100,
         fontSize: 18,
         fontFamily: "playfair",
     },
     metaDivider: {
-        color: Colors.primary300,
+        color: Colors.primary100,
         fontSize: 18,
     },
     rating: {
-        color: Colors.primary300,
+        color: Colors.primary100,
         fontSize: 18,
         fontFamily: "playfair",
     },
     
     progressContainer: {
-        backgroundColor: "white",
+        backgroundColor: Colors.primary300,
         borderRadius: 7,
+    },
+    progressText: {
+        color: Colors.primary200,
+        fontFamily: "playfair",
+        fontSize: 14,
+        textAlign: "center",
+        marginBottom: 5,
     },
     
     buttonContainer: {
         justifyContent: "center",
+        flexDirection: "row",
+        flexWrap: "wrap",
         alignItems: "center",
-        backgroundColor: "white",
-        marginTop: 10,
-        borderRadius: 7,
+        backgroundColor: Colors.primary500,
+        borderRadius: 10,
+        marginBottom: 10,
     },
 
     bottomContainer: {
-        
+        backgroundColor: Colors.primary500o8,
+        borderRadius: 10
     },
     descGenreContainer: {
         margin: 10,
+        maxHeight: 240,
     },
     descContainer: {
-
+        backgroundColor: Colors.primary600o8,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        borderRadius: 10
     },
     description: {
-        color: Colors.primary300,
+        color: Colors.primary100,
         fontSize: 18,
         fontFamily: "playfair",
     },
     genreContainer: {
         alignItems: "center",
-        marginTop: 10,
+        paddingBottom: 10,
     },
     genre: {
-        color: Colors.primary300,
-        fontSize: 16,
+        color: Colors.primary100,
+        fontSize: 15,
         fontFamily: "playfair",
+        textTransform: "capitalize",
     },
 });

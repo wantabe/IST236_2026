@@ -9,8 +9,11 @@ import {
 } from "@expo/vector-icons";
 import * as SplashScreen from "expo-splash-screen";
 
-// import context
+// import contexts
 import BookmarksContextProvider, { BookmarksContext } from "./store/context/bookmarks-context";
+import ListsContextProvider from "./store/context/lists-context";
+import ListBooksContextProvider from "./store/context/list-books-context";
+import ReadingProgressContextProvider from "./store/context/reading-progress-context";
 
 // import navigation libs
 import { NavigationContainer } from "@react-navigation/native";
@@ -22,6 +25,7 @@ import HomeScreen from "./screens/HomeScreen";
 import DiscoverScreen from "./screens/DiscoverScreen";
 import LibraryScreen from "./screens/LibraryScreen";
 import BookDetailScreen from "./screens/BookDetailScreen";
+import ListDetailScreen from "./screens/ListDetailScreen";
 
 // import constants
 import Colors from "./constants/colors";
@@ -38,13 +42,13 @@ function TabsNavigator() {
       // attributes/styling
       screenOptions={{
         tabBarShowLabel: true,
-        tabBarActiveBackgroundColor: Colors.primary300,
-        tabBarActiveTintColor: Colors.accent500,
-        tabBarInactiveBackgroundColor: Colors.primary500,
-        tabBarInactiveTintColor: Colors.primary300,
+        tabBarActiveBackgroundColor: Colors.primary400,
+        tabBarActiveTintColor: Colors.primary100,
+        tabBarInactiveBackgroundColor: Colors.primary600,
+        tabBarInactiveTintColor: Colors.accent500,
         tabbarLabelStyle: {
           fontSize: 12,
-          fontFamily: "serif",
+          fontFamily: "playfair",
         },
         tabBarStyle: {
           backgroundColor: Colors.primary500,
@@ -96,6 +100,8 @@ export default function App() {
   // setup custom fonts
   const [fontsLoaded, fontError] = useFonts({
     playfair: require("./assets/fonts/Playfair.ttf"),
+    playfairBold: require("./assets/fonts/PlayfairBold.ttf"),
+    playfairBoldItalic: require("./assets/fonts/PlayfairBoldItalic.ttf"),
   });
 
   // show splash screen until fonts loaded
@@ -111,40 +117,54 @@ export default function App() {
   } else {
     return (
       <>
-        <StatusBar style="auto" />
-        {/* wrap native stack navigator in context provider for app-wide state mgmt */}
+        <StatusBar style="light" />
+        {/* wrap native stack navigator in context providers for app-wide state mgmt */}
         <BookmarksContextProvider>
-          {/* native stack navigator */}
-          <NavigationContainer>
-            <Stack.Navigator
-              // attributes/styling
-              initialRouteName="TabsScreen"
-              screenOptions={{
-                headerTintColor: Colors.primary300,
-                headerStyle: { backgroundColor: Colors.primary500 },
-                contentStyle: { backgroundColor: "black" },
-              }}
-            >
-              <Stack.Screen
-                name="TabsScreen"
-                component={TabsNavigator}
-                options={{ headerShown: false }}
-              />              
-              <Stack.Screen
-                name="BookDetail"
-                component={BookDetailScreen}
-                options={{
-                  headerBackTitleVisible: false,
-                }}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
+          <ListsContextProvider>
+            <ListBooksContextProvider>
+              <ReadingProgressContextProvider>
+              {/* native stack navigator */}
+              <NavigationContainer>
+                <Stack.Navigator
+                  // attributes/styling
+                  initialRouteName="TabsScreen"
+                  screenOptions={{
+                    headerTintColor: Colors.primary300,
+                    headerStyle: { backgroundColor: Colors.primary500 },
+                    contentStyle: { backgroundColor: "black" },
+                  }}
+                >{/* stack screens */}
+                  <Stack.Screen
+                    name="TabsScreen"
+                    component={TabsNavigator}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="BookDetail"
+                    component={BookDetailScreen}
+                    options={{
+                      headerBackTitleVisible: false,
+                    }}
+                  />
+                  <Stack.Screen
+                    name="ListDetail"
+                    component={ListDetailScreen}
+                    options={{
+                      headerBackTitleVisible: false,
+                    }}
+                  />
+                </Stack.Navigator>
+              </NavigationContainer>
+              </ReadingProgressContextProvider>
+            </ListBooksContextProvider>
+          </ListsContextProvider>
         </BookmarksContextProvider>
       </>
     );
   }
 }
 
+// stylesheet
 const styles = StyleSheet.create({
   container: {
     flex: 1,

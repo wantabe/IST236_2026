@@ -10,9 +10,15 @@ import { BOOKS } from "../data/dummy_data";
 
 // import context
 import { BookmarksContext } from "../store/context/bookmarks-context";
+import Title from "../components/Title";
+import { ReadingProgressContext } from "../store/context/reading-progress-context";
 
-const FILTERS = ["all", "reading", "finished"];
+// list of status filters
+const FILTERS = ["all", "unread", "reading", "finished"];
 
+// --------------
+// Library Screen
+// --------------
 function LibraryScreen() {
   // set safe area screen boundaries
   const insets = useSafeAreaInsets();
@@ -21,19 +27,37 @@ function LibraryScreen() {
   const [selectedFilter, setSelectedFilter] = useState("all");
   // bookmark context
   const bookmarksCtx = useContext(BookmarksContext);
+  // reading progress context
+  const progressCtx = useContext(ReadingProgressContext);
 
   // filter data to only bookmarked books
   const bookmarkedBooks = BOOKS.filter((book) =>
     bookmarksCtx.ids.includes(book.id),
   );
 
-  // apply reading/finished filter
-  const displayedBooks =
-    selectedFilter === "all"
-      ? bookmarkedBooks
-      : bookmarkedBooks.filter((book) => book.status === selectedFilter);
+  // filter books to their reading status
+  const displayedBooks = bookmarkedBooks.filter((book) => {
+    if (selectedFilter === "all") return true;
+    return getBookStatus(book.id, book.pageCount) === selectedFilter;
+  })
 
-  // render
+  // function to get book status
+  function getBookStatus(bookId, pageCount) {
+    // get progress from context
+    const progress = progressCtx.getProgress(bookId);
+    // current page is 0, "unread"
+    if (progress.currentPage <= 0) {
+      return "unread";
+    } else if (progress.currentPage >= pageCount) { // current page = page count, "finished"
+      return "finished";
+    } else {
+      return "reading"; // current page > 0, < page count, "reading"
+    }
+  }
+
+  // -------
+  // Display
+  // -------
   return (
     <View
       style={[
@@ -46,6 +70,9 @@ function LibraryScreen() {
         },
       ]}
     >
+      {/* title */}
+      <Title>Library</Title>
+      {/* filter buttons */}
       <View style={styles.filterRow}>
         {FILTERS.map((filter) => (
           <Pressable
@@ -68,6 +95,7 @@ function LibraryScreen() {
           </Pressable>
         ))}
       </View>
+      {/* filtered list of books */}
       <BookList items={displayedBooks} />
     </View>
   );
@@ -79,11 +107,13 @@ export default LibraryScreen;
 const styles = StyleSheet.create({
   rootContainer: {
     flex: 1,
+    backgroundColor: "#16213e",
   },
 
   filterRow: {
     flexDirection: "row",
     flexWrap: "wrap",
+    justifyContent: "center",
     padding: 10,
     gap: 8,
   },

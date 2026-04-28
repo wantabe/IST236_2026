@@ -1,16 +1,23 @@
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
+// ------------------
+// BookItem Component
+// ------------------
 function BookItem(props) {
+    // navigation
     const navigation = useNavigation();
 
+    // handle selected book
     function selectedBookHandler() {
         navigation.navigate("BookDetail", {
             bookId: props.id,
         });
     }
 
-    // render
+    // -------
+    // Display
+    // -------
     return (
         <View
             style={[
@@ -24,7 +31,7 @@ function BookItem(props) {
                 </View>
                 <View style={styles.infoContainer}>
                     <Text style={styles.title}>{props.title}</Text>
-                    <Text style={styles.description}>{props.description}</Text>
+                    <Text style={styles.description}>{props.author}</Text>
                 </View>
             </Pressable>
         </View>
@@ -33,6 +40,7 @@ function BookItem(props) {
 
 export default BookItem;
 
+// stylesheet
 const styles = StyleSheet.create({
     itemContainer: {
         paddingHorizontal: 5,

@@ -8,7 +8,7 @@ class Book {
         rating,
         description,
         imageUrl,
-        status
+        pageCount
     ) {
         this.id = id;
         this.isbn = isbn;
@@ -18,7 +18,7 @@ class Book {
         this.rating = rating;
         this.description = description;
         this.imageUrl = imageUrl;
-        this.status = status;
+        this.pageCount = pageCount;
     }
 
     toString() {
